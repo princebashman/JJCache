@@ -34,6 +34,7 @@ public class CacheClient {
     private CacheBulider cacheBulider;
 
     private Boolean cacheEmptyValue;
+    private Boolean openLevel2;
 
     public CacheClient(CacheServiceProviderHolder cacheServiceProviderHolder,JjCacheConfig cacheConfig) {
         init(cacheServiceProviderHolder, cacheConfig);
@@ -50,6 +51,7 @@ public class CacheClient {
         this.cacheBulider = new SimpleCacheBuilder();
 
         this.cacheEmptyValue = cacheConfig.getCacheEmptyValue();
+        this.openLevel2 = cacheConfig.getOpenLevel2();
     }
 
 
@@ -114,6 +116,7 @@ public class CacheClient {
         Cache<String, V> cache = cacheBulider.buildCache(key);
         cache.setValue(value);
         setLevel1Cache(cache);
+        // TODO 设置二级缓存
         return oldCache;
     }
 

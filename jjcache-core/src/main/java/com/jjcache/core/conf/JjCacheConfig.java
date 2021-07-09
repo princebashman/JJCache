@@ -19,6 +19,7 @@ public class JjCacheConfig {
    private Properties level1_CacheProperties = new Properties();
    private Properties level2_CacheProperties = new Properties();
 
+   private Boolean openLevel2; // 是否开启二级缓存
    private Boolean cacheEmptyValue; // 是否缓存空对象
    private String serialization; // 序列化格式
 
@@ -80,14 +81,20 @@ public class JjCacheConfig {
       JjCacheConfig config = new JjCacheConfig();
       config.properties = properties;
 
-      config.serialization = trim(config.properties.getProperty("jjcache.serialization")) == null ? "json" : trim(config.properties.getProperty("jjcache.serialization"));
+      String serialization = trim(config.properties.getProperty("jjcache.serialization"));
+      config.serialization = serialization  == null ? "json" : serialization;
       config.cacheEmptyValue = "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.cache_empty_value")));
+      config.openLevel2 = trim(config.properties.getProperty("jjcache.open_level2")) == null ? Boolean.TRUE : "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.cache_empty_value")));
 
       return config;
    }
 
    public Boolean getCacheEmptyValue() {
       return cacheEmptyValue;
+   }
+
+   public Boolean getOpenLevel2() {
+      return openLevel2;
    }
 
    private static String trim(String str) {
