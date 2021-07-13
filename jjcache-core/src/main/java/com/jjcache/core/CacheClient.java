@@ -65,9 +65,7 @@ public class CacheClient {
      */
     public <V>Cache get(String key, boolean cacheEmptyValue) {
 
-        if (Objects.isNull(key)) {
-            return null;
-        }
+        checkKey(key);
 
         // Get from first cache.
         Cache<String, V> cache = getLevel1Cache(key);
@@ -109,12 +107,14 @@ public class CacheClient {
     }
 
     public <V>Cache set(String key, V value) {
-        if (Objects.isNull(key)) {
-            throw new CacheExcepiton("禁止缓存空key");
-        }
+        return set(key, value, 0);
+    }
+
+    public <V>Cache set(String key, V value, long expiretime) {
+        checkKey(key);
+
         Cache<String, V> oldCache = getLevel1Cache(key);
-        Cache<String, V> cache = cacheBulider.buildCache(key);
-        cache.setValue(value);
+        Cache<String, V> cache = cacheBulider.buildCache(key, value, expiretime);
         setLevel1Cache(cache);
         // TODO 设置二级缓存
         return oldCache;
@@ -137,6 +137,14 @@ public class CacheClient {
      */
     private <K, V> void setLevel1Cache(Cache<K, V> cache) {
         cacheServiceProviderHolder.getLevel1Provider().setCache(cache);
+    }
+
+    /**
+     * 检查缓存键
+     * @param key
+     */
+    private void checkKey(Object key) {
+        if (Objects.isNull(key)) throw new NullPointerException("disable caching empty key");
     }
 
 }

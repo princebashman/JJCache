@@ -52,6 +52,27 @@ public abstract class CacheServiceProvider {
     public abstract <K, V> void setCache(Cache<K, V> cache);
 
     /**
+     * 删除缓存
+     * @param cache 缓存对象
+     * @return
+     */
+    protected abstract boolean deleteCache(Cache cache);
+
+    /**
+     * 删除缓存
+     * @param key 缓存键
+     * @return
+     */
+    protected abstract boolean deleteCache(String key);
+
+    /**
+     * 检查过期时间
+     * @param cache
+     * @return
+     */
+    protected abstract <K, V> boolean checkExpire(Cache<K, V> cache);
+
+    /**
      * 获取缓存继承属性 - type
      * @param value
      * @return

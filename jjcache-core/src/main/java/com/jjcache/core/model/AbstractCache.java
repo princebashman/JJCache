@@ -18,6 +18,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     public volatile long expireTime; // 缓存过期时间
     public volatile long LastUseTime; // 缓存最后使用时间
 
+    public static final long DEFAULT_EXPIRE_TIME = -1;
+
 
     /**
      * 获取缓存key
@@ -97,13 +99,16 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     /**
      * 获取缓存剩余时间
-     * @return 当缓存已过期时，返回-1；否则返回缓存剩余过期时间
+     * @return
+     * 当缓存没有过期时间时，返回-1;
+     * 当缓存已过期时，返回0；
+     * 否则返回缓存剩余过期时间
      */
     @Override
-    public long getRemainingExpirationTime() {
-        long now = System.currentTimeMillis();
-        long expireTime = getExpireTime();
-        if (now > expireTime) return -1;
+    public long getRemainingExpireTime() {
+        long now = System.currentTimeMillis(), expireTime = getExpireTime();
+        if (expireTime == DEFAULT_EXPIRE_TIME) return expireTime;
+        if (now >= expireTime) return 0;
         else return expireTime - now;
     }
 

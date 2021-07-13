@@ -14,4 +14,8 @@ public interface CacheBulider {
 
     <K, V> Cache<K, V> buildCache(K key);
 
+    <K, V> Cache<K, V> buildCache(K key, V value);
+
+    <K, V> Cache<K, V> buildCache(K key, V value, long expiretime);
+
 }

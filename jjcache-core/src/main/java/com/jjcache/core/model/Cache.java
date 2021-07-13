@@ -12,8 +12,6 @@ import java.time.LocalDateTime;
  */
 public interface Cache<K, V> extends Cloneable, Serializable {
 
-    Logger logger = LoggerFactory.getLogger(Cache.class);
-
     /**
      * 获取缓存键
      * @return
@@ -78,7 +76,7 @@ public interface Cache<K, V> extends Cloneable, Serializable {
      * 获取剩余过期时间
      * @return
      */
-    public long getRemainingExpirationTime();
+    public long getRemainingExpireTime();
 
 
 }

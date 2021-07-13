@@ -19,4 +19,14 @@ public class SimpleCacheBuilder implements CacheBulider {
     public <K, V> Cache<K, V> buildCache(K key) {
         return new SimpleCache<K, V>(key);
     }
+
+    @Override
+    public <K, V> Cache<K, V> buildCache(K key, V value) {
+        return new SimpleCache<>(key, value);
+    }
+
+    @Override
+    public <K, V> Cache<K, V> buildCache(K key, V value, long expiretime) {
+        return new SimpleCache<>(key, value, expiretime);
+    }
 }

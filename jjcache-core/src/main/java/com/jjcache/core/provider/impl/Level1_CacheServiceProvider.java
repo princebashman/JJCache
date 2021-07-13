@@ -1,6 +1,7 @@
 package com.jjcache.core.provider.impl;
 
 import com.jjcache.common.constant.CacheConstant;
+import com.jjcache.common.exception.CacheExcepiton;
 import com.jjcache.core.conf.JjCacheConfig;
 import com.jjcache.core.model.Cache;
 import com.jjcache.core.provider.CacheServiceProvider;
@@ -47,7 +48,11 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
         this.jjCacheConfig = cacheConfig;
     }
 
-
+    /**
+     * 获取缓存值
+     * @param key 缓存键
+     * @return
+     */
     @Override
     public Object getValue(String key) {
         Cache cache = getCache(key);
@@ -57,6 +62,12 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
         return cache.getValue();
     }
 
+    /**
+     * 设置缓存对象
+     * @param cache
+     * @param <K>
+     * @param <V>
+     */
     @Override
     public <K, V> void setCache(Cache<K, V> cache) {
         cache.setLevel(level);
@@ -65,14 +76,44 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
         l1CacheMap.put(cache.getKey(), cache);
     }
 
+    /**
+     * 获取缓存对象
+     * @param key 缓存键
+     * @return
+     */
     @Override
     public Cache getCache(String key) {
         Cache cache = l1CacheMap.get(key);
-        if (Objects.isNull(cache)) {
-            return null;
-        } else {
-            return cache;
+        if (checkExpire(cache)) {
+            l1CacheMap.remove(key); // TODO 惰性删除缓存
+            cache = null;
         }
+        return Objects.isNull(cache) ? null : cache;
+    }
+
+    @Override
+    protected boolean deleteCache(Cache cache) {
+        return l1CacheMap.remove(cache.getKey()) == null ? false : true;
+    }
+
+    @Override
+    protected boolean deleteCache(String key) {
+        return l1CacheMap.remove(key) == null ? false : true;
+    }
+
+    /**
+     * 校验一级缓存的剩余缓存时间
+     * @param cache
+     * @param <K>
+     * @param <V>
+     * @return 为true时，缓存已过期，为false时，缓存未过期
+     */
+    @Override
+    protected <K, V> boolean checkExpire(Cache<K, V> cache) {
+        if (Objects.isNull(cache)) throw new CacheExcepiton("the incoming cache to check is empty");
+        boolean flag = cache.getLevel() == 1;
+        if (flag) flag = cache.getRemainingExpireTime() == 0;
+        return flag;
     }
 
 
