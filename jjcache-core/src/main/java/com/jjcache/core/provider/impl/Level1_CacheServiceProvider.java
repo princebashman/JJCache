@@ -3,6 +3,7 @@ package com.jjcache.core.provider.impl;
 import com.jjcache.common.constant.CacheConstant;
 import com.jjcache.common.exception.CacheExcepiton;
 import com.jjcache.core.conf.JjCacheConfig;
+import com.jjcache.core.listener.CacheListener;
 import com.jjcache.core.model.Cache;
 import com.jjcache.core.provider.CacheServiceProvider;
 
@@ -18,6 +19,9 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
 
     private static final Integer level = CacheConstant.CACHE_LEVEL_ONE; // 缓存服务提供类 - 一级缓存
     private JjCacheConfig jjCacheConfig;
+    private Map<Long, Cache> expireMap; // 过期缓存map
+    private int count; // 过期缓存数量
+    private CacheListener cacheListener;
 
     private final Map<Object, Cache> l1CacheMap;
 
@@ -28,6 +32,7 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
      */
     public Level1_CacheServiceProvider(JjCacheConfig cacheConfig) {
         l1CacheMap = new HashMap<>(64);
+        expireMap = new HashMap<>();
         init(cacheConfig);
     }
 
@@ -46,6 +51,10 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
     @Override
     public void init(JjCacheConfig cacheConfig) {
         this.jjCacheConfig = cacheConfig;
+    }
+
+    public void addCacheListener(CacheListener listener) {
+        this.cacheListener = listener;
     }
 
     /**
@@ -73,6 +82,10 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
         cache.setLevel(level);
         Object value = cache.getValue();
         cache.setType(getType(value));
+
+        // put expireMap
+        if (System.currentTimeMillis() < cache.getExpireTime()) expireMap.put(cache.getExpireTime(), cache);
+
         l1CacheMap.put(cache.getKey(), cache);
     }
 
@@ -84,11 +97,15 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
     @Override
     public Cache getCache(String key) {
         Cache cache = l1CacheMap.get(key);
-        if (checkExpire(cache)) {
-            l1CacheMap.remove(key); // TODO 惰性删除缓存
-            cache = null;
+        if (!Objects.isNull(cache)) {
+            // TODO 惰性删除缓存
+            if (checkExpire(cache)) {
+                l1CacheMap.remove(key);
+                expireMap.remove(cache.getExpireTime());
+                cache = null;
+            }
         }
-        return Objects.isNull(cache) ? null : cache;
+        return cache;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class JjCacheBuilder {
 
     private CacheServiceProviderHolder cacheServiceProviderHolder;
     private JjCacheConfig jjCacheConfig;
-    private CacheClient cacheClient;
+    private volatile CacheClient cacheClient;
 
     /**
      * JjCache客户端工厂 构造器

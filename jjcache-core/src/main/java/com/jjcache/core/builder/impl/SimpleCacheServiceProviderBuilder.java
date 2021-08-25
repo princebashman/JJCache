@@ -2,6 +2,7 @@ package com.jjcache.core.builder.impl;
 
 import com.jjcache.core.builder.CacheServiceProviderBuilder;
 import com.jjcache.core.conf.JjCacheConfig;
+import com.jjcache.core.listener.CacheListener;
 import com.jjcache.core.provider.CacheServiceProvider;
 import com.jjcache.core.provider.impl.Level1_CacheServiceProvider;
 
@@ -13,7 +14,9 @@ public class SimpleCacheServiceProviderBuilder implements CacheServiceProviderBu
 
     @Override
     public CacheServiceProvider bulidLevelOneProvider(JjCacheConfig cacheConfig) {
-        return new Level1_CacheServiceProvider(cacheConfig);
+        Level1_CacheServiceProvider serviceProvider = new Level1_CacheServiceProvider(cacheConfig);
+        serviceProvider.addCacheListener(new CacheListener());
+        return serviceProvider;
     }
 
     @Override

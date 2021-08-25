@@ -5,7 +5,6 @@ import com.jjcache.core.builder.JjCacheBuilder;
 import com.jjcache.core.conf.JjCacheConfig;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Jjcache 缓存入口

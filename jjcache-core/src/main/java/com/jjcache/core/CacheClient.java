@@ -1,6 +1,5 @@
 package com.jjcache.core;
 
-import com.jjcache.common.exception.CacheExcepiton;
 import com.jjcache.core.builder.CacheBulider;
 import com.jjcache.core.builder.impl.SimpleCacheBuilder;
 import com.jjcache.core.conf.JjCacheConfig;

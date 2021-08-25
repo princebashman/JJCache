@@ -4,7 +4,6 @@ import com.jjcache.core.builder.CacheServiceProviderBuilder;
 import com.jjcache.core.builder.impl.SimpleCacheServiceProviderBuilder;
 import com.jjcache.core.conf.JjCacheConfig;
 import com.jjcache.core.provider.CacheServiceProvider;
-import com.jjcache.core.provider.impl.Level1_CacheServiceProvider;
 
 import java.util.Objects;
 
