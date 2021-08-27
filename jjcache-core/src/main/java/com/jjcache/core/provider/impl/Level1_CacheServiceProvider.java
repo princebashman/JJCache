@@ -32,7 +32,7 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
      */
     public Level1_CacheServiceProvider(JjCacheConfig cacheConfig) {
         l1CacheMap = new HashMap<>(64);
-        expireMap = new HashMap<>();
+        expireMap = new TreeMap<>();
         init(cacheConfig);
     }
 
@@ -54,6 +54,8 @@ public class Level1_CacheServiceProvider extends CacheServiceProvider {
     }
 
     public void addCacheListener(CacheListener listener) {
+        listener.initExpireMap(expireMap);
+        listener.initCacheMap(l1CacheMap);
         this.cacheListener = listener;
     }
 

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 缓存客户端 - 缓存操作入口
@@ -44,7 +45,7 @@ public class CacheClient {
      * @param cacheServiceProviderHolder
      * @param cacheConfig
      */
-    public void init(CacheServiceProviderHolder cacheServiceProviderHolder,JjCacheConfig cacheConfig) {
+    private void init(CacheServiceProviderHolder cacheServiceProviderHolder,JjCacheConfig cacheConfig) {
         this.cacheServiceProviderHolder = cacheServiceProviderHolder;
         this.cacheConfig = cacheConfig;
         this.cacheBulider = new SimpleCacheBuilder();
@@ -110,7 +111,19 @@ public class CacheClient {
     }
 
     public <V>Cache set(String key, V value, long expiretime) {
+        return set(key, value, expiretime, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * 按照指定时间单位存储过期缓存
+     * @return
+     */
+    public <V>Cache set(String key, V value, long expiretime, TimeUnit timeUnit) {
         checkKey(key);
+
+        if (!TimeUnit.MILLISECONDS.equals(timeUnit)) {
+            expiretime = timeUnit.toMillis(expiretime);
+        }
 
         Cache<String, V> oldCache = getLevel1Cache(key);
         Cache<String, V> cache = cacheBulider.buildCache(key, value, expiretime);

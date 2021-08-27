@@ -15,7 +15,7 @@ public class SimpleCacheServiceProviderBuilder implements CacheServiceProviderBu
     @Override
     public CacheServiceProvider bulidLevelOneProvider(JjCacheConfig cacheConfig) {
         Level1_CacheServiceProvider serviceProvider = new Level1_CacheServiceProvider(cacheConfig);
-        serviceProvider.addCacheListener(new CacheListener());
+        serviceProvider.addCacheListener(new CacheListener(cacheConfig));
         return serviceProvider;
     }
 
