@@ -68,8 +68,17 @@ public class CacheListener {
     }
 
     /**
-     * TODO 定期删除重写
-     * 定期删除过期缓存
+     * 弹性垃圾回收策略
+     *  1. 流量稳定的情况下
+     *      每次缓存清理数量 / 缓存总数量 <= 阈值 时，垃圾回收时间可以延缓一定的时间，小于最大时间
+     *      (说明这段时间的缓存数量)
+     *      每次缓存清理数量 / 缓存总数量 > 阈值 时，垃圾回收时间提前一定的时间，大于最小时间
+     */
+
+    /**
+     * 1.采用redis的抽查机制
+     * 2.弹性垃圾回收
+     * 删除过期缓存
      * @param expireMap 过期缓存集合
      */
     public void cycleCheckExpire(Map<Long, Cache> expireMap) {
@@ -87,8 +96,9 @@ public class CacheListener {
                     break;
                 }
             }
-            
+
             do_delete_exit.compareAndSet(true, false);
+            do_last_time = System.currentTimeMillis();
             logger.info("clean expire cache, with " + expireCount + " counts");
         }
     }
