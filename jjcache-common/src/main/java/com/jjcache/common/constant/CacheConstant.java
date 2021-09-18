@@ -9,6 +9,7 @@ public class CacheConstant {
     public static final Integer CACHE_LEVEL_ONE = 1; // level_1
     public static final Integer CACHE_LEVEL_TWO = 2; // level_2
 
+    // 缓存类型
     public enum CacheTypeEnum {
         CACHE_TYPE_STRING(0, "String"), CACHE_TYPE_OBJECT(1, "Object"),
         CACHE_TYPE_NUMBER(2, "Number"), CACHE_TYPE_LIST(3, "List"),
