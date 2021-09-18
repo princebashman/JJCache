@@ -9,6 +9,12 @@ import com.jjcache.core.model.Cache;
  */
 public abstract class PenetrationStrategy {
 
-    public abstract void resolvePentration(Cache cache);
+    /**
+     * 缓存解决方案 【钩子】
+     */
+
+    public Cache resolvePentration(String key) {
+        return null;
+    }
 
 }

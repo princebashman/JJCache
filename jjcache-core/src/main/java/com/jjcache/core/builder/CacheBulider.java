@@ -10,6 +10,13 @@ import com.jjcache.core.model.Cache;
  */
 public interface CacheBulider {
 
+    /**
+     * 空构造器
+     * 拥有key
+     * 拥有key && value
+     * 拥有key && value && expiretime
+     */
+
     <K, V> Cache<K, V> buildCache();
 
     <K, V> Cache<K, V> buildCache(K key);

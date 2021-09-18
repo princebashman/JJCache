@@ -78,6 +78,7 @@ public class CacheClient {
                 if (Objects.isNull(cache)) {
                     // TODO Get from second cache.
                     // y/n cache empty value.
+                    // TODO 应该使用策略来解决缓存空值的问题
                     if (cacheEmptyValue) {
                         Cache<String, V> emptyCache = cacheBulider.buildCache(key);
                         set(key, emptyCache);

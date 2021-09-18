@@ -28,24 +28,13 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
     /**
      * 策略数量
      */
-    public static final Integer strategiesCount;
+    public static final Integer strategiesCount = PenetrationConstant.PenetrationEnum.getCount(); // init count.;
 
     /**
      * 策略字典 : 缓存空值、简单过滤校验、布隆过滤器
      */
-    private static final Map<String, PenetrationStrategy> strategies;
+    private static final Map<String, PenetrationStrategy> strategies  = new HashMap<>(strategiesCount); // init map.
 
-    /**
-     * 初始化解决策略
-     */
-    static {
-        strategiesCount = PenetrationConstant.PenetrationEnum.getCount(); // init count.
-        strategies = new HashMap<>(strategiesCount); // init map.
-        // 缓存空值
-        strategies.put(PenetrationConstant.PenetrationEnum.EMPTY_VALUE.getName(), new PenetrationEmptyCacheStrategy());
-        // 过滤校验
-        // 布隆过滤器
-    }
 
     public PenetrationCacheProcessor(JjCacheConfig cacheConfig) {
         initProcessor(cacheConfig);
@@ -53,16 +42,20 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
 
     @Override
     void initProcessor(JjCacheConfig cacheConfig) {
+        // 缓存空值
+        strategies.put(PenetrationConstant.PenetrationEnum.EMPTY_VALUE.getName(), new PenetrationEmptyCacheStrategy());
+        // 过滤校验
+        // 布隆过滤器
         // TODO 从配置中获取策略
     }
 
+    /**
+     * 获取对应的缓存解决方案策略执行器
+     * @param strategyName
+     * @return
+     */
     @Override
     public PenetrationStrategy getStrategy(String strategyName) {
         return strategies.get(strategyName);
-    }
-
-    @Override
-    public void resolvePenetration(Cache cache) {
-
     }
 }
