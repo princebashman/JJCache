@@ -74,7 +74,7 @@ public class StampedingCacheProcessor extends AbstractCacheProcessor implements 
      * @param expire
      * @return
      */
-    public Boolean limitCheck(Long expire) {
+    private Boolean limitCheck(Long expire) {
         return Long.MAX_VALUE - expire > dynamicFloatExpire ? Boolean.FALSE : Boolean.TRUE;
     }
 
@@ -82,7 +82,7 @@ public class StampedingCacheProcessor extends AbstractCacheProcessor implements 
      *
      * @return TRUE 为增 , FALSE 为减
      */
-    public Boolean isAddWithIncrement() {
+    private Boolean isAddWithIncrement() {
         return getAndIncrement() % 2 == 0;
     }
 
@@ -90,7 +90,7 @@ public class StampedingCacheProcessor extends AbstractCacheProcessor implements 
      * 获取并自增
      * @return
      */
-    public final int getAndIncrement() {
+    private final int getAndIncrement() {
         int current, next;
         do {
             current = this.doCount.get();

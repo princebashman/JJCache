@@ -2,6 +2,7 @@ package com.jjcache.core.conf;
 
 import com.jjcache.common.exception.CacheConfigExcepiton;
 import com.jjcache.core.Jjcache;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +21,11 @@ public class JjCacheConfig {
    private Properties level2_CacheProperties = new Properties();
 
    private Boolean openLevel2; // 是否开启二级缓存
+   private Boolean stampeding; // 缓存雪崩解决方案
+   private Boolean penetration; // 缓存穿透解决方案
    private Boolean cacheEmptyValue; // 是否缓存空对象
+   private Boolean bloomFilter; // 布隆过滤器
+   private Boolean simpleFilter; // 简单过滤器
    private String serialization; // 序列化格式
 
    /**
@@ -83,10 +88,20 @@ public class JjCacheConfig {
 
       String serialization = trim(config.properties.getProperty("jjcache.serialization"));
       config.serialization = serialization  == null ? "json" : serialization;
-      config.cacheEmptyValue = "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.cache_empty_value")));
+
+      config.stampeding = "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.processor.stampeding")));
+      config.penetration = "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.processor.penetration")));
+      config.cacheEmptyValue = "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.processor.penetration.cache_empty_value")));
+      config.bloomFilter = "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.processor.penetration.bloom_filter")));
+      config.simpleFilter = "false".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.processor.penetration.simple_filter")));
       config.openLevel2 = trim(config.properties.getProperty("jjcache.open_level2")) == null ? Boolean.TRUE : "true".equalsIgnoreCase(trim(config.properties.getProperty("jjcache.cache_empty_value")));
 
+      postCheck();
       return config;
+   }
+
+   private static void postCheck() {
+      // TODO 保证缓存穿透解决策略只有一个开启
    }
 
    public Boolean getCacheEmptyValue() {
@@ -95,6 +110,22 @@ public class JjCacheConfig {
 
    public Boolean getOpenLevel2() {
       return openLevel2;
+   }
+
+   public Boolean getStampeding() {
+      return stampeding;
+   }
+
+   public Boolean getBloomFilter() {
+      return bloomFilter;
+   }
+
+   public Boolean getSimpleFilter() {
+      return simpleFilter;
+   }
+
+   public Boolean getPenetration() {
+      return penetration;
    }
 
    private static String trim(String str) {

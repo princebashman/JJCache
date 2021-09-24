@@ -1,6 +1,7 @@
 package com.jjcache.core;
 
 import com.jjcache.core.builder.CacheBulider;
+import com.jjcache.core.builder.ProcessorBuilder;
 import com.jjcache.core.builder.impl.SimpleCacheBuilder;
 import com.jjcache.core.conf.JjCacheConfig;
 import com.jjcache.core.holder.CacheServiceProviderHolder;
@@ -30,11 +31,24 @@ public class CacheClient {
     private Map<String, Object> keyLocks =new ConcurrentHashMap<>();
 
     private CacheServiceProviderHolder cacheServiceProviderHolder;
+
     private JjCacheConfig cacheConfig;
+
+    /**
+     * 缓存 builder
+     */
     private CacheBulider cacheBulider;
 
+    /**
+     * 缓存解决方案 builder
+     */
+    private ProcessorBuilder processorBuilder;
+
+    // ************************** config begin *****************************//
     private Boolean cacheEmptyValue;
+
     private Boolean openLevel2;
+    // ************************** config end *****************************//
 
     public CacheClient(CacheServiceProviderHolder cacheServiceProviderHolder,JjCacheConfig cacheConfig) {
         init(cacheServiceProviderHolder, cacheConfig);
@@ -49,6 +63,7 @@ public class CacheClient {
         this.cacheServiceProviderHolder = cacheServiceProviderHolder;
         this.cacheConfig = cacheConfig;
         this.cacheBulider = new SimpleCacheBuilder();
+        this.processorBuilder = new ProcessorBuilder(cacheConfig, cacheBulider);
 
         this.cacheEmptyValue = cacheConfig.getCacheEmptyValue();
         this.openLevel2 = cacheConfig.getOpenLevel2();

@@ -1,6 +1,9 @@
 package com.jjcache.core.processor;
 
 import com.jjcache.common.constant.PenetrationConstant;
+import com.jjcache.common.exception.CacheConfigExcepiton;
+import com.jjcache.core.Jjcache;
+import com.jjcache.core.builder.CacheBulider;
 import com.jjcache.core.conf.JjCacheConfig;
 import com.jjcache.core.model.Cache;
 import com.jjcache.core.processor.pro.PenetrationResolve;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 缓存穿透解决方案
@@ -25,6 +29,8 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
 
     private final static Logger logger = LoggerFactory.getLogger(PenetrationCacheProcessor.class);
 
+    private volatile CacheBulider cacheBulider;
+
     /**
      * 策略数量
      */
@@ -36,17 +42,26 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
     private static final Map<String, PenetrationStrategy> strategies  = new HashMap<>(strategiesCount); // init map.
 
 
-    public PenetrationCacheProcessor(JjCacheConfig cacheConfig) {
+    public PenetrationCacheProcessor(JjCacheConfig cacheConfig, CacheBulider cacheBulider) {
+        this.cacheBulider = cacheBulider;
         initProcessor(cacheConfig);
     }
 
     @Override
     void initProcessor(JjCacheConfig cacheConfig) {
         // 缓存空值
-        strategies.put(PenetrationConstant.PenetrationEnum.EMPTY_VALUE.getName(), new PenetrationEmptyCacheStrategy());
+        if (cacheConfig.getCacheEmptyValue()) {
+            strategies.put(PenetrationConstant.PenetrationEnum.EMPTY_VALUE.getName(), new PenetrationEmptyCacheStrategy(cacheBulider));
+        }
         // 过滤校验
+        if (cacheConfig.getSimpleFilter()) {
+            strategies.put(PenetrationConstant.PenetrationEnum.SIMPLE_FILTER.getName(), new PenetrationSimpleFilterCacheStrategy());
+        }
         // 布隆过滤器
-        // TODO 从配置中获取策略
+        if (cacheConfig.getBloomFilter()) {
+            strategies.put(PenetrationConstant.PenetrationEnum.BLOOM_FILTER.getName(), new PenetrationBloomFilterCacheStrategy());
+
+        }
     }
 
     /**
@@ -56,6 +71,10 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
      */
     @Override
     public PenetrationStrategy getStrategy(String strategyName) {
-        return strategies.get(strategyName);
+        PenetrationStrategy strategy = strategies.get(strategyName);
+        if (Objects.isNull(strategy)) {
+            throw new CacheConfigExcepiton("The " + strategyName + " is not configured in properties.");
+        }
+        return strategy;
     }
 }
