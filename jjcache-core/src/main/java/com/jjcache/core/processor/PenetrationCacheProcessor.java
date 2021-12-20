@@ -29,7 +29,9 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
 
     private final static Logger logger = LoggerFactory.getLogger(PenetrationCacheProcessor.class);
 
-    private volatile CacheBulider cacheBulider;
+    private CacheBulider cacheBulider;
+
+    private JjCacheConfig cacheConfig;
 
     /**
      * 策略数量
@@ -49,6 +51,7 @@ public class PenetrationCacheProcessor extends AbstractCacheProcessor implements
 
     @Override
     void initProcessor(JjCacheConfig cacheConfig) {
+        this.cacheConfig = cacheConfig;
         // 缓存空值
         if (cacheConfig.getCacheEmptyValue()) {
             strategies.put(PenetrationConstant.PenetrationEnum.EMPTY_VALUE.getName(), new PenetrationEmptyCacheStrategy(cacheBulider));
